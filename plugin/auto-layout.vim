@@ -21,6 +21,9 @@ function LayoutKey()
 endfunction
 
 function s:windowFormat()
+  if b:mode != 'A'
+    return b:mode
+  endif
   if &columns > &lines*2.5
     return "L" " landscape
   else
@@ -37,7 +40,7 @@ function ApplyLayoutRules(rules)
   echo layoutKey
   for rule in a:rules
     echo rule
-    if (rule.regex =~ layoutKey)
+    if (layoutKey =~ rule.regex)
       echo "Matched" rule
       execute rule.command
       "if rule.break
@@ -49,6 +52,17 @@ function ApplyLayoutRules(rules)
   exe currentWindow . "wincmd w"
 endfunction
 
+let b:mode = 'A'
+
+function s:setMode(mode)
+  let b:mode = a:mode
+  ApplyLayoutRules
+endfunction
+
+command Portrait :call s:setMode('P')
+command Landscape  :call s:setMode('L')
+command AutoLayout  :call s:setMode('A')
+command NoLayout  :call s:setMode('X')
 
 " generate a sucessesion of :wincmd
 " from a string
@@ -61,8 +75,12 @@ function FromWinCmds(s)
 endfunction
 let s:portrait2 = FromWinCmds('=tK')
 let s:landscape2 = FromWinCmds('=tH')
-let s:myrules = [ {'regex': "Pbb", 'command':s:portrait2 } , {'regex': "Lbb", 'command':s:landscape2 } ]
+let s:myrules = [ {'regex': "P..", 'command':s:portrait2 } 
+               \,{'regex': "L..", 'command':s:landscape2 }
+               \]
 
 command ApplyLayoutRules :call ApplyLayoutRules(s:myrules)
 nnoremap <C-W>z :ApplyLayoutRules<CR>
 
+au VimResized * ApplyLayoutRules
+au WinNew * ApplyLayoutRules
