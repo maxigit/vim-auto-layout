@@ -21,7 +21,7 @@ function LayoutKey()
 endfunction
 
 function s:windowFormat()
-  if &columns > &lines
+  if &columns > &lines*2.5
     return "L" " landscape
   else
     return "P"
@@ -33,6 +33,7 @@ endfunction
 "
 function ApplyLayoutRules(rules)
   let layoutKey = s:windowFormat() . LayoutKey() 
+  let currentWindow = winnr()
   echo layoutKey
   for rule in a:rules
     echo rule
@@ -44,10 +45,22 @@ function ApplyLayoutRules(rules)
       "endif
     endif
   endfor
+
+  exe currentWindow . "wincmd w"
 endfunction
 
-let s:portrait2 = "echomsg 'portrait'"
-let s:landscape2 = "echomsg 'landscape'"
+
+" generate a sucessesion of :wincmd
+" from a string
+function FromWinCmds(s)
+  let cmds = []
+  for c in str2list(a:s)
+    call add(cmds, "wincmd " . nr2char(c))
+  endfor
+  return  join(cmds,  " | ")
+endfunction
+let s:portrait2 = FromWinCmds('=tK')
+let s:landscape2 = FromWinCmds('=tH')
 let s:myrules = [ {'regex': "Pbb", 'command':s:portrait2 } , {'regex': "Lbb", 'command':s:landscape2 } ]
 
 command ApplyLayoutRules :call ApplyLayoutRules(s:myrules)
