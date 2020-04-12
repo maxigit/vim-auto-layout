@@ -41,11 +41,10 @@ endfunction
 function ApplyLayoutRules(rules)
   let layoutKey = s:windowFormat() . LayoutKey() 
   let currentWindow = winnr()
-  echo layoutKey
   for rule in a:rules
-    echo rule
     if (layoutKey =~ rule.regex)
-      echo "Matched" layoutKey rule
+      " echo "Matched" layoutKey rule
+      echomsg "Matched" layoutKey rule
       execute rule.command
       break
     endif
@@ -74,8 +73,8 @@ function FromWinCmds(s)
   let cmds = []
   for i in str2list(a:s)
     let c = nr2char(i)
-    if (c <= '1' && c >= '9')
-      let cmd = c . "wincmd 2" " switch to windwo n
+    if (c >= '1' && c <= '9')
+      let cmd = c . "wincmd w" " switch to windwo n
     elseif c == '<'
       let cmd = 'wincmd H'
     elseif c == '>'
@@ -93,13 +92,14 @@ function FromWinCmds(s)
 endfunction
 let s:portrait2 = FromWinCmds('1^=')
 let s:landscape2 = FromWinCmds('1<=')
-let s:myrules = [ {'regex': "^[SM]..$", 'command':s:portrait2 } 
+let s:myrules = [{'regex': "^-", 'command': "" }
+               \,{'regex': "^[SM]..$", 'command':s:portrait2 } 
                \,{'regex': "^...$", 'command':s:landscape2 }
-               \,{'regex': "^S...", 'command': FromWinCmds("bJtK") . " | ResizeMax 3 25 10 | wincmd =" }
-               \,{'regex': "^M...", 'command': FromWinCmds("=bJtH") . " | ResizeMax 3 25 10 | wincmd =" }
+               \,{'regex': "^S...$", 'command': FromWinCmds("bJtK") . " | ResizeMax 3 25 10 | wincmd =" }
+               \,{'regex': "^M...$", 'command': FromWinCmds("=bJtH") . " | ResizeMax 3 25 10 | wincmd =" }
                \,{'regex': "^....$", 'command': FromWinCmds("bLtH=") }
                \,{'regex': "^.....$", 'command': FromWinCmds("1<2>3>4v=") }
-               \,{'regex': "^......$", 'command': FromWinCmds("1<2>3>4v5v=") }
+               \,{'regex': "^......$", 'command': FromWinCmds("1<2>3>2v2v=") }
                \]
 
 command ApplyLayoutRules :call ApplyLayoutRules(s:myrules)
@@ -111,7 +111,6 @@ au WinNew * ApplyLayoutRules
 
 
 function ResizeMax(nr, percent, lines)
-s echo a:nr a:percent a:lines
   execute a:nr . "resize " . max([a:percent*&lines/100,a:lines])
 endfunction
 function ResizeMin(nr, percent, lines)
