@@ -91,13 +91,15 @@ function FromWinCmds(s)
   endfor
   return  join(cmds,  " | ")
 endfunction
-let s:portrait2 = FromWinCmds('=1^')
-let s:landscape2 = FromWinCmds('=1<')
+let s:portrait2 = FromWinCmds('1^=')
+let s:landscape2 = FromWinCmds('1<=')
 let s:myrules = [ {'regex': "^[SM]..$", 'command':s:portrait2 } 
                \,{'regex': "^...$", 'command':s:landscape2 }
                \,{'regex': "^S...", 'command': FromWinCmds("bJtK") . " | ResizeMax 3 25 10 | wincmd =" }
                \,{'regex': "^M...", 'command': FromWinCmds("=bJtH") . " | ResizeMax 3 25 10 | wincmd =" }
-               \,{'regex': "^....", 'command': FromWinCmds("bLtH") }
+               \,{'regex': "^....$", 'command': FromWinCmds("bLtH=") }
+               \,{'regex': "^.....$", 'command': FromWinCmds("1<2>3>4v=") }
+               \,{'regex': "^......$", 'command': FromWinCmds("1<2>3>4v5v=") }
                \]
 
 command ApplyLayoutRules :call ApplyLayoutRules(s:myrules)
