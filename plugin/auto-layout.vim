@@ -21,8 +21,8 @@ function LayoutKey()
 endfunction
 
 function s:windowFormat()
-  if b:mode != 'A'
-    return b:mode
+  if s:mode != 'A'
+    return s:mode
   endif
   if &columns > 240
     return "X" "XL
@@ -54,10 +54,10 @@ function ApplyLayoutRules(rules)
   exe currentWindow . "wincmd w"
 endfunction
 
-let b:mode = 'A'
+let s:mode = 'A'
 
 function s:setMode(mode)
-  let b:mode = a:mode
+  let s:mode = a:mode
   ApplyLayoutRules
 endfunction
 
@@ -81,8 +81,8 @@ let s:portrait2 = FromWinCmds('=tK')
 let s:landscape2 = FromWinCmds('=tH')
 let s:myrules = [ {'regex': "^[SM]..$", 'command':s:portrait2 } 
                \,{'regex': "^...$", 'command':s:landscape2 }
-               \,{'regex': "^S...", 'command': FromWinCmds("bJtK") }
-               \,{'regex': "^M...", 'command': FromWinCmds("bJtH") }
+               \,{'regex': "^S...", 'command': FromWinCmds("bJtK") . " | 3resize 15 | wincmd =" }
+               \,{'regex': "^M...", 'command': FromWinCmds("=bJtH") . " | 3resize 15 | wincmd =" }
                \,{'regex': "^....", 'command': FromWinCmds("bLtH") }
                \]
 
