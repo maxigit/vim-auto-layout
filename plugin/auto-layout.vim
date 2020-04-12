@@ -72,13 +72,27 @@ command NoLayout  :call s:setMode('-')
 " from a string
 function FromWinCmds(s)
   let cmds = []
-  for c in str2list(a:s)
-    call add(cmds, "wincmd " . nr2char(c))
+  for i in str2list(a:s)
+    let c = nr2char(i)
+    if (c <= '1' && c >= '9')
+      let cmd = c . "wincmd 2" " switch to windwo n
+    elseif c == '<'
+      let cmd = 'wincmd H'
+    elseif c == '>'
+      let cmd = 'wincmd L'
+    elseif c == '^'
+      let cmd = 'wincmd K'
+    elseif c == 'v'
+      let cmd = 'wincmd J'
+    else
+      let  cmd = "wincmd " . c
+    endif
+    call add(cmds, cmd)
   endfor
   return  join(cmds,  " | ")
 endfunction
-let s:portrait2 = FromWinCmds('=tK')
-let s:landscape2 = FromWinCmds('=tH')
+let s:portrait2 = FromWinCmds('=1^')
+let s:landscape2 = FromWinCmds('=1<')
 let s:myrules = [ {'regex': "^[SM]..$", 'command':s:portrait2 } 
                \,{'regex': "^...$", 'command':s:landscape2 }
                \,{'regex': "^S...", 'command': FromWinCmds("bJtK") . " | 3resize 15 | wincmd =" }
