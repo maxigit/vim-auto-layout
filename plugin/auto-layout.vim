@@ -117,3 +117,4 @@ function ResizeMin(nr, percent, lines)
 endfunction
 
 command -bar -nargs=+ ResizeMax :call ResizeMax(<f-args>)
+command -bar -nargs=+ ResizeMin :call ResizeMin(<f-args>)
