@@ -95,8 +95,8 @@ let s:portrait2 = FromWinCmds('=1^')
 let s:landscape2 = FromWinCmds('=1<')
 let s:myrules = [ {'regex': "^[SM]..$", 'command':s:portrait2 } 
                \,{'regex': "^...$", 'command':s:landscape2 }
-               \,{'regex': "^S...", 'command': FromWinCmds("bJtK") . " | 3resize 15 | wincmd =" }
-               \,{'regex': "^M...", 'command': FromWinCmds("=bJtH") . " | 3resize 15 | wincmd =" }
+               \,{'regex': "^S...", 'command': FromWinCmds("bJtK") . " | ResizeMax 3 25 10 | wincmd =" }
+               \,{'regex': "^M...", 'command': FromWinCmds("=bJtH") . " | ResizeMax 3 25 10 | wincmd =" }
                \,{'regex': "^....", 'command': FromWinCmds("bLtH") }
                \]
 
@@ -106,3 +106,14 @@ nnoremap <C-W>z :ApplyLayoutRules<CR>
 au VimResized * ApplyLayoutRules
 au WinNew * ApplyLayoutRules
 
+
+
+function ResizeMax(nr, percent, lines)
+s echo a:nr a:percent a:lines
+  execute a:nr . "resize " . max([a:percent*&lines/100,a:lines])
+endfunction
+function ResizeMin(nr, percent, lines)
+  execute a:nr "resize " min([a:percent*&lines/100,a:lines])
+endfunction
+
+command -bar -nargs=+ ResizeMax :call ResizeMax(<f-args>)
